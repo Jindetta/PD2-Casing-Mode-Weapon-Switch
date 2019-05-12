@@ -1,42 +1,31 @@
 CasingModeWeaponSwitch = CasingModeWeaponSwitch or {}
 
-function CasingModeWeaponSwitch:get(unit, has_weapon_ban)
-    if has_weapon_ban ~= nil then
-        has_weapon_ban = has_weapon_ban == self._weapons_banned
-    end
+function CasingModeWeaponSwitch:forbid_state(unit)
+    local state = unit:movement():current_state_name()
 
-    return unit == managers.player:local_player(), has_weapon_ban
+    return unit == managers.player:local_player() and HuskPlayerMovement.clean_states[state]
 end
 
 if RequiredScript == "lib/units/beings/player/playerinventory" then
-    local PlayerInventoryPlaceSelection = PlayerInventory._place_selection
+    local PlayerInventorySynchGadget = PlayerInventory.synch_gadget_state
+    local PlayerInventorySynchWeapon = PlayerInventory.synch_equipped_weapon
 
-    function PlayerInventory:_place_selection(index, equip)
-        local player, ban = CasingModeWeaponSwitch:get(self._unit, true)
-
-        if not player or not equip or not ban then
-            PlayerInventoryPlaceSelection(self, index, equip)
+    function PlayerInventory:synch_gadget_state(...)
+        if not CasingModeWeaponSwitch:forbid_state(self._unit) then
+            PlayerInventorySynchGadget(self, ...)
+        else
+            PlayerInventorySynchGadget(self)
         end
     end
-elseif RequiredScript == "lib/units/beings/player/states/playerstandard" then
-    local PlayerStandardStartActionEquip = PlayerStandard._start_action_equip
 
-    function PlayerStandard:_start_action_equip(...)
-        if CasingModeWeaponSwitch:get(self._unit) then
-            CasingModeWeaponSwitch._weapons_banned = false
+    function PlayerInventory:synch_equipped_weapon(...)
+        if not CasingModeWeaponSwitch:forbid_state(self._unit) then
+            PlayerInventorySynchWeapon(self, ...)
         end
-
-        return PlayerStandardStartActionEquip(self, ...)
     end
 else
     local HookClass = PlayerMaskOff or PlayerClean
     local HookClassUpdateCheckActions = HookClass._update_check_actions
-    local HookClassEnter = HookClass._enter
-
-    function HookClass:_enter(...)
-        CasingModeWeaponSwitch._weapons_banned = true
-        HookClassEnter(self, ...)
-    end
 
     function HookClass:_update_check_actions(...)
         HookClassUpdateCheckActions(self, ...)
@@ -55,5 +44,7 @@ else
         elseif input.btn_switch_weapon_press then
             player_inventory:equip_next()
         end
+
+        player_inventory:hide_equipped_unit()
     end
 end
