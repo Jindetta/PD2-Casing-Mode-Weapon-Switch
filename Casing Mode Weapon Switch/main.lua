@@ -1,12 +1,12 @@
+local function is_clean_state()
+    return HuskPlayerMovement.clean_states[managers.player:current_state()]
+end
+
 if RequiredScript == "lib/units/beings/player/huskplayermovement" then
     local HuskPlayerMovementSwitch = HuskPlayerMovement._can_play_weapon_switch_anim
 
     function HuskPlayerMovement:_can_play_weapon_switch_anim()
-        if not self.clean_states[self._state] then
-            return HuskPlayerMovementSwitch(self)
-        end
-
-        return false
+        return not is_clean_state() and HuskPlayerMovementSwitch(self) or false
     end
 else
     local HookClass = PlayerMaskOff or PlayerClean
