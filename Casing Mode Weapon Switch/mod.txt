@@ -2,7 +2,7 @@
     "name" : "Casing Mode Weapon Switch",
     "description" : "Switch weapons while Casing Mode is active.",
     "author" : "Jindetta",
-    "contact" : "",
+    "contact" : "https://steamcommunity.com/id/jindetta",
     "version" : "1.00",
     "blt_version" : 2,
     "hooks" : [
