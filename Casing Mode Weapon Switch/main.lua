@@ -1,27 +1,12 @@
-CasingModeWeaponSwitch = CasingModeWeaponSwitch or {}
+if RequiredScript == "lib/units/beings/player/huskplayermovement" then
+    local HuskPlayerMovementSwitch = HuskPlayerMovement._can_play_weapon_switch_anim
 
-function CasingModeWeaponSwitch:forbid_state(unit)
-    local state = unit:movement():current_state_name()
-
-    return unit == managers.player:local_player() and HuskPlayerMovement.clean_states[state]
-end
-
-if RequiredScript == "lib/units/beings/player/playerinventory" then
-    local PlayerInventorySynchGadget = PlayerInventory.synch_gadget_state
-    local PlayerInventorySynchWeapon = PlayerInventory.synch_equipped_weapon
-
-    function PlayerInventory:synch_gadget_state(...)
-        if not CasingModeWeaponSwitch:forbid_state(self._unit) then
-            PlayerInventorySynchGadget(self, ...)
-        else
-            PlayerInventorySynchGadget(self)
+    function HuskPlayerMovement:_can_play_weapon_switch_anim()
+        if not self.clean_states[self._state] then
+            return HuskPlayerMovementSwitch(self)
         end
-    end
 
-    function PlayerInventory:synch_equipped_weapon(...)
-        if not CasingModeWeaponSwitch:forbid_state(self._unit) then
-            PlayerInventorySynchWeapon(self, ...)
-        end
+        return false
     end
 else
     local HookClass = PlayerMaskOff or PlayerClean

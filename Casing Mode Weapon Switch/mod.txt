@@ -7,7 +7,7 @@
     "blt_version" : 2,
     "hooks" : [
         {
-            "hook_id" : "lib/units/beings/player/playerinventory",
+            "hook_id" : "lib/units/beings/player/huskplayermovement",
             "script_path" : "main.lua"
         },
         {
