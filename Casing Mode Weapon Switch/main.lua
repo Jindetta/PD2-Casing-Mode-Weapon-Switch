@@ -28,6 +28,8 @@ else
             self._previous_equipped_selection = nil
         elseif input.btn_switch_weapon_press then
             inventory:equip_next()
+        else
+            return
         end
 
         inventory:hide_equipped_unit()
