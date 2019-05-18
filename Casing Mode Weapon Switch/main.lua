@@ -2,7 +2,15 @@ local function is_clean_state()
     return HuskPlayerMovement.clean_states[managers.player:current_state()]
 end
 
-if RequiredScript == "lib/units/beings/player/huskplayermovement" then
+if RequiredScript == "lib/units/weapons/weaponlaser" then
+    local WeaponLaserSetOn = WeaponLaser._set_on
+
+    function WeaponLaser:_set_on(...)
+        if not is_clean_state() then
+            WeaponLaserSetOn(self, ...)
+        end
+    end
+elseif RequiredScript == "lib/units/beings/player/huskplayermovement" then
     local HuskPlayerMovementSwitch = HuskPlayerMovement._can_play_weapon_switch_anim
 
     function HuskPlayerMovement:_can_play_weapon_switch_anim()
